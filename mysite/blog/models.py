@@ -14,6 +14,13 @@ class Post(models.Model):
         DRAFT = 'DF', 'Draft'
         PUBLISHED = 'PB', 'Published'
 
+
+    class PublishedManager(models.Manager):
+        def get_queryset(self):
+            return (
+            super().get_queryset().filter(status=Post.Status.PUBLISHED)
+            )    
+
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250)
     body = models.TextField()
@@ -30,5 +37,8 @@ class Post(models.Model):
         on_delete=models.CASCADE,
         related_name='blog_posts'
     )
+
+    objects = models.Manager() # The default manager.
+    published = PublishedManager() # Our custom manager.
     def __str__(self):
         return self.title
